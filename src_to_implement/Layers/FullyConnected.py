@@ -9,10 +9,11 @@ class FullyConnected(Base.BaseLayer):
 
         self.input_size = input_size
         self.output_size = output_size
+
         self.weights = np.random.uniform(0, 1, (input_size + 1, output_size))
         # self.biases = np.random.uniform(0, 1, (1, output_size))
 
-        self._gradient_weights = np.zeros((self.weights.shape),dtype=float)
+        self._gradient_weights = None
         self.optimizer = None
 
     def initialize(self, weights_initializer, bias_initializer):
@@ -52,10 +53,10 @@ class FullyConnected(Base.BaseLayer):
     def optimizer(self, value):
         self._optimizer = value
 
-    @property
-    def weights(self):
-        return self._weights
-
-    @weights.setter
-    def weights(self, weights):
-        self._weights = weights
+    # @property
+    # def weights(self):
+    #     return self._weights
+    #
+    # @weights.setter
+    # def weights(self, weights):
+    #     self._weights = weights
