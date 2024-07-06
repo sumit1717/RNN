@@ -19,4 +19,8 @@ class Dropout(Base.BaseLayer):
         return input_tensor * dropout_mask_rand
 
     def backward(self, error_tensor):
-        return error_tensor * self.dropout_mask_rand
+        if self.testing_phase:
+            return error_tensor
+        else:
+            return error_tensor * self.dropout_mask_rand
+

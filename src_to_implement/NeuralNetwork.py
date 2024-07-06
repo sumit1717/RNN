@@ -18,8 +18,8 @@ class NeuralNetwork:
 
         for layer in self.layers:
             input_tensor = layer.forward(input_tensor)
-            if self.optimizer.regularizer:
-                reg_loss = self.optimizer.regularizer.norm(layer.weights)
+            if self.optimizer.regularizer and layer.trainable is True:
+                reg_loss += self.optimizer.regularizer.norm(layer.weights)
 
         loss = self.loss_layer.forward(input_tensor, label_tensor)
 
@@ -38,16 +38,23 @@ class NeuralNetwork:
         self.layers.append(layer)
 
     def train(self, iterations):
+        self.phase = False
+
+        for layer in self.layers:
+            layer.testing_phase = self.phase
+
         for _ in range(iterations):
             loss_value = self.forward()
             self.loss.append(loss_value)
             self.backward()
 
     def test(self, input_tensor):
+        self.phase = True
+
         for layer in self.layers:
+            layer.testing_phase = self.phase
             input_tensor = layer.forward(input_tensor)
         return input_tensor
-
 
     @property
     def phase(self):
@@ -58,5 +65,3 @@ class NeuralNetwork:
         self.testing_phase = phase
         for layer in self.layers:
             layer.phase = phase
-
-

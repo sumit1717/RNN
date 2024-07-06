@@ -1,7 +1,7 @@
 import copy
 import numpy as np
 from Layers import Base
-from src_to_implement.Layers.Helpers import compute_bn_gradients
+from Layers import Helpers
 
 
 class BatchNormalization(Base.BaseLayer):
@@ -21,6 +21,10 @@ class BatchNormalization(Base.BaseLayer):
         self.moving_variance = None
 
         self._optimizer = None
+
+    def initialize(self, weights_initializer, bias_initializer):
+        self.weights = np.ones((1, self.channels))
+        self.bias = np.zeros((1, self.channels))
 
     def forward(self, input_tensor):
         is_convolutional = (len(input_tensor.shape) == 4)
@@ -63,7 +67,7 @@ class BatchNormalization(Base.BaseLayer):
 
         gradient_beta = np.sum(error_tensor, axis=0)
         gradient_gamma = np.sum(error_tensor * self.normalized_input, axis=0)
-        gradient_input = compute_bn_gradients(error_tensor, self.input_tensor, self.gamma,
+        gradient_input = Helpers.compute_bn_gradients(error_tensor, self.input_tensor, self.gamma,
                                               self.batch_mean, self.batch_variance)
 
         if self._optimizer is not None:
