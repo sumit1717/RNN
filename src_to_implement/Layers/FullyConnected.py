@@ -12,6 +12,7 @@ class FullyConnected(Base.BaseLayer):
         self.weights = np.random.uniform(0, 1, (input_size + 1, output_size))
         # self.biases = np.random.uniform(0, 1, (1, output_size))
 
+        self._gradient_weights = np.zeros((self.weights.shape),dtype=float)
         self.optimizer = None
 
     def initialize(self, weights_initializer, bias_initializer):
@@ -31,7 +32,7 @@ class FullyConnected(Base.BaseLayer):
         error_tensor_prev = np.dot(error_tensor, self.weights[:-1].T)
 
         if self.optimizer:
-            self.weights = self.optimizer.calculate_update(self.weights, self.gradient_weights)
+            self.weights = self.optimizer.calculate_update(self.weights, self._gradient_weights)
 
         return error_tensor_prev
 
@@ -51,14 +52,10 @@ class FullyConnected(Base.BaseLayer):
     def optimizer(self, value):
         self._optimizer = value
 
-    # def get_optimizer(self):
-    #     return self.optimizer
-    #
-    # def set_optimizer(self, optimizer):
-    #     self.optimizer = optimizer
-    #
-    # def get_gradient_weights(self):
-    #     return self.gradient_weights
-    #
-    # def set_gradient_weights(self, gradient_weights):
-    #     self.gradient_weights = gradient_weights
+    @property
+    def weights(self):
+        return self._weights
+
+    @weights.setter
+    def weights(self, weights):
+        self._weights = weights
